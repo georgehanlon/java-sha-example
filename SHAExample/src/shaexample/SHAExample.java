@@ -8,6 +8,7 @@ package shaexample;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.*;
 
 /**
  *
@@ -21,21 +22,41 @@ public class SHAExample {
      */
     public static void main(String[] args) throws NoSuchAlgorithmException {
         String passwordToHash = "password";
-        byte[] salt = getSalt();
-        System.out.println(salt);
         
-        int c1 = (int)salt[0];
-        String salt_to_save = Integer.toString(c1);
-        for (int i = 1; i < salt.length; i++) {
-            System.out.println(salt[i]);
-            salt_to_save += ("," + Integer.toString((int)salt[i]));
+        String s = encrypt(passwordToHash);
+        
+        String[] fromFile = s.split(" ");
+        
+        if (checkMatch(passwordToHash, fromFile[0], fromFile[1]) == true){
+            System.out.println("we did it!");
+        } else {
+            System.out.println("oh no");
         }
-        System.out.println(salt_to_save);
+    }
+    
+    public static String encrypt(String plainTextPassword) throws NoSuchAlgorithmException{
+        String output = "";
+        byte[] salt = getSalt();
         
-        //byte[] salt = {-64,117,93,-83,86,79,-40,-4,82,82,118,99,63,-3,-6,24};
+        String salt_to_save = Base64.getEncoder().encodeToString(salt);
         
-        String securePassword = get_SHA_256_SecurePassword(passwordToHash, salt);
-        System.out.println(securePassword);
+        String encryptedPass = get_SHA_256_SecurePassword(plainTextPassword, salt);
+        
+        output = encryptedPass + " " + salt_to_save;
+        
+        return output;
+    }
+    
+    public static boolean checkMatch(String input, String encryptedPassword, String savedSalt){
+        byte[] salt = Base64.getDecoder().decode(savedSalt);
+        
+        String result = get_SHA_256_SecurePassword(input, salt);
+        
+        if (result.contentEquals(encryptedPassword)){
+            return true;
+        } else {
+            return false;
+        }
     }
     
     private static String get_SHA_256_SecurePassword(String passwordToHash, byte[] salt)
@@ -66,4 +87,5 @@ public class SHAExample {
         sr.nextBytes(salt);
         return salt;
     }
+
 }
