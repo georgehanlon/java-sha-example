@@ -59,7 +59,7 @@ public class SHAExample {
         }
     }
     
-    private static String get_SHA_256_SecurePassword(String passwordToHash, byte[] salt)
+    public static String get_SHA_256_SecurePassword(String passwordToHash, byte[] salt)
     {
         String generatedPassword = null;
         try {
@@ -80,7 +80,7 @@ public class SHAExample {
         return generatedPassword;
     }
     
-    private static byte[] getSalt() throws NoSuchAlgorithmException
+    public static byte[] getSalt() throws NoSuchAlgorithmException
     {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];
